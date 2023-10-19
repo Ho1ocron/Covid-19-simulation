@@ -3,195 +3,63 @@
     <head>
         <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
         
-        <title>COVID-19 simulation</title>
+        <title>Virus pandemic simulation</title>
 
-        <style>
-            @font-face {
-                font-family: "first";
-                src: url("first.ttf");
-            }
-
-            body {
-                background-color: rgb(51 51 51);
-            }
-
-            h1 {
-                font-family: "first";
-                font-size: 30pt;
-                text-align: center;
-                color: rgb(51 204 51);
-            }
-
-            canvas {
-                border: thin solid rgb(51 204 51);
-                border-radius: 8%;
-            }
-
-            .container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-
-            #num {
-                font-family: "first";
-                color: rgb(51 204 51);
-                margin-bottom: 1%;
-            }
-
-            #chance {
-                font-family: "first";
-                color: rgb(51 204 51);
-                margin-bottom: 1%;
-            }
-
-            #radius {
-                font-family: "first";
-                color: rgb(51 204 51);
-                margin-bottom: 1%;
-            }
-
-            #radius_input {
-                margin-bottom: 1%;
-            }
-            
-            .person {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-
-            #ch_num {
-                margin-bottom: 1%;
-            }
-
-            #pl_num {
-                margin-bottom: 1%;
-            }
-            
-            #start {
-                margin-bottom: 1%;
-            }
-
-            button {
-                font-family: "first";
-                background-color: rgb(51 51 51);
-                color: white;
-                border: 2px solid rgb(51 204 51);
-                border-radius: 10%;
-                font-size: 1.2pc;
-            }
-
-            input {
-                border: 2px solid rgb(51 204 51);
-                border-radius: 5px;
-                background-color: rgb(51 51 51);
-                color: white;
-                text-align: center;
-            }
-
-            button:hover {
-                background-color: #3e8e41
-            }
-
-            button:active {
-            background-color: #3e8e41;
-            box-shadow: 0 5px rgb(51 51 51);
-            transform: translateY(4px);
-            }
-        </style>
+        <link rel="stylesheet" href="style/style.css">
+        	
+        <link id="darkmode-stylesheet" rel="stylesheet" href="style/darkmode.css" media="(prefers-color-scheme: dark)" />
 
     </head>
     <body>
         <main>
             <header>
-                <h1>Covid-19 simulation</h1>
+                <h1 id="header1">Virus pandemic simulation</h1>
             </header>
 
-            <div class="person">
-                <button type="button" id="restart" onclick="reload()">Restart</button>
-                <p id="num">People number:</p>
-                <input id="pl_num" type="number" min="0" max="500">
-                <p id="chance">Chance to be infected:</p>
-                <input id="ch_num" type="number" min="5" max="50">
-                <p id="radius">Radius to be infected:</p>
-                <input id="radius_input" type="number" min="1" max="20">
-                <button type="button" id="start" onclick="createPerson()" >Start</button>
+
+            <div class="Main" id="PeopleAmount">
+                <span class="Text">People amount: </span>
+                <input class="Input" id="PeopleAmountInput" type="number" min="100" max="500">
             </div>
 
-            <div class="container">
-                <canvas id="city" width="550%" height="550%"></canvas>
+
+            <div class="Main" id="ChanceToBeInfected">
+                <span class="Text">Chance to be infected: </span>
+                <input class="Input" id="ChanceToBeInfectedInput" type="number" min="1" max="100">
+            </div>
+
+
+            <div class="Main" id="RadiusOfInfection">
+                <span class="Text">Radius of infection: </span>
+                <input class="Input" id="RadiusOfInfectionInput" type="number" min="100" max="500">
+            </div>
+
+
+            <div class="Main" id="ChanceOfDeath">
+                <span class="Text" id="ChanceOfDeathText">Chance of death: </span>
+                <input class="Input" id="ChanceOfDeathInput" type="number" min="1" max="100">
+            </div>
+
+            
+            <div class="Buttons" id="btn1">
+                <button class="btns" id="StartButton">Start simulation</button>
+                <button class="btns" id="RestartButton" onclick="reload()">Restart simulation</button>
+            </div>
+
+
+            <div class="Container">
+                <canvas id="Canvas" height="600" width="600"></canvas>
             </div>
             
+
+        <script type="text/javascript">
+
+            function reload()
+            {
+                location.reload();
+            }
+
+        </script>
         </main>
     </body>
-
-    <script type="text/javascript">
-        var CHANCE = document.getElementById('ch_num').value;
-        var RADIUS = document.getElementById('radius_input').value;
-        var btn = document.getElementById('start'); 
-
-        var HOME_SIZE = 25;
-        var SIZE = 5;
-        var WindowW = 600;
-        var WindowH = 600;
-
-        let TIMER = null;
-        let canvas, context ;
-        let persons = [];
-
-        canvas = document.getElementById('city');
-        context = canvas.getContext('2d');
-
-
-        class Person
-        {
-            constructor(x, y, radius, color)
-            {
-                this.x = x;
-                this.y = y;
-                this.radius = radius;
-                this.color = color;
-            }
-            
-            draw()
-            {
-                context.beginPath();
-                context.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-                context.fillStyle = this.color;
-                context.fill()
-                context.closePath()
-            }
-        }
-        
-
-        function createPerson()
-        {
-            num = parseInt(document.getElementById('pl_num').value);
-            //alert(typeof num)
-            for (let i = 0; i < num; i++) {
-                const x = Math.random() * canvas.width;
-                const y = Math.random() * canvas.height;
-                const radius = Math.random() * 5 + 1;
-                const color = 'white';
-                persons.push(new Person(x, y, radius, color));  
-            }
-            persons.forEach(persons => {persons.draw();})
-        }
-
-
-        function reload()
-        {
-            location.reload();
-        }
-        /*TO DO*/
-        /*
-            1) Create an ability to people to move with a speed that user sets and with random chance it will be higher or lower. 
-            2) Create death so if a person dead he won't infect anyone else. Death's chance can be customized by user and it can be randomly higher or lower for each person.
-            3) People can recover so they won't be infected again and wob't infect others. So, if a person doens't die he recovers that's mean that recover chance = 100% - death chance.
-            4) How long a person is ill and so how long he can infect others.  
-        */
-    </script>
 </html>
