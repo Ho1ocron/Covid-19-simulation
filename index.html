@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+        
+        <title>Virus pandemic simulation</title>
+
+        <link rel="stylesheet" href="style/style.css">
+
+    </head>
+    <body>
+        <main>
+            <header>
+                <h1 id="header1">Virus pandemic simulation</h1>
+            </header>
+
+
+            <div class="Main" id="PeopleAmount">
+                <span class="Text">People amount: </span>
+                <input class="Input" id="PeopleAmountInput" type="number" min="100" max="10000">
+            </div>
+
+
+            <div class="Main" id="ChanceToBeInfected">
+                <span class="Text">Chance to be infected: </span>
+                <input class="Input" id="ChanceToBeInfectedInput" type="number" min="1" max="100">
+            </div>
+
+
+            <div class="Main" id="RadiusOfInfection">
+                <span class="Text">Radius of infection: </span>
+                <input class="Input" id="RadiusOfInfectionInput" type="number" min="100" max="500">
+            </div>
+
+
+            <div class="Main" id="ChanceOfDeath">
+                <span class="Text" id="ChanceOfDeathText">Chance of death: </span>
+                <input class="Input" id="ChanceOfDeathInput" type="number" min="1" max="100">
+            </div>
+
+
+            <div class="Buttons" id="btn1">
+                <button class="btns" id="StartButton" onclick="canvasEventListener()">Start simulation</button>
+                <button class="btns" id="RestartButton" onclick="reloadSite()">Restart simulation</button>
+            </div>
+
+
+            <div class="Container">
+                <canvas id="canvas1" height="600" width="600"></canvas>
+            </div>
+            
+        <script src="src/main.js"></script>
+
+        <script>
+            function reloadSite() 
+            {
+                location.reload();
+            }
+        </script>
+        </main>
+    </body>
+</html>
