@@ -1,27 +1,40 @@
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d");
+
 const particleArray = [];
-var elt = 0;
+const RecoveredParticleArray = [];
+const InfectedParticleArray = [];
 
 canvas.addEventListener("click", canvasEventListener);
 
 
 class Particle
 {
-    constructor(Pinfected)
+    constructor(ParticleInfected, tag)
     {
         
         this.x = Math.random() * 600;
         this.y = Math.random() * 600;
-        this.v = 2;
+        this.v = 3;
         this.angle = Math.random() * 360;
-        this.size = 2; //random size)
-        this.color = "white"//"hsl(" + elt + ", 100%, 50%)";  
-        this.infected = Pinfected;
+        this.size = 8;
+        this.tag = tag; 
+        this.infected = ParticleInfected;
         this.recovered = false;
+        this.triedToRecover = false;
+
+        this.ChanceToBeInfected = Number(document.getElementById("ChanceToBeInfectedInput").value) / 100;
 
         this.speedX = Math.random() * 5 - 1.5;
         this.speedY = Math.random() * 5 - 1.5;
+
+        if (this.infected === true) {
+            this.color = "rgb(235, 58, 93)";
+        }
+
+        else if (this.infected === false && this.recovered === false) {
+            this.color = "white";
+        }
     }
 
 
@@ -29,6 +42,9 @@ class Particle
     {
         this.x += this.v * Math.cos(this.angle);
         this.y += this.v * Math.sin(this.angle);
+
+
+        if (Math.random() < 0.001) {this.angle = Math.random() * 360;}
         
         if((this.x < this.size) || (this.x > canvas.width - this.size)) {
             this.angle = Math.PI - this.angle;
@@ -57,19 +73,19 @@ class Particle
         const distance  = (dx ** 2 + dy ** 2)**0.5;
         //console.log(distance)
 
-        if (distance != 0 && distance < 1) {
+        if (distance != 0 && distance <= 8) {
+            target.angle = Math.atan2(dy,dx);
             this.angle = Math.random() * 360;
-            //console.log(distance);
 
-            if (Math.random() < 0.1 && this.infected === false && target.infected === true) {
+            if (Math.random() < this.ChanceToBeInfected && this.infected === false && target.infected === true && this.recovered === false) {
                 this.infected = true;
                 this.color = "rgb(235, 58, 93)";
             }
             
-            else if (this.infected === true && target.recovered === true) {
+            else if (Math.random() < 0.1 && this.infected === true && target.recovered === true) {
                 this.recovered = true;
                 this.infected = false;
-                this.color = "blue"
+                this.color = "blue";
             }
         }
     }
@@ -77,19 +93,15 @@ class Particle
 
     recover()
     {
-        if (Math.random() < 0.001 && this.infected === true) { 
+        if (Math.random() < 0.0005 && this.infected === true && this.recovered === false && this.triedToRecover === false) { 
             this.recovered = true;
             this.infected = false;
             this.color = "blue";
+            this.triedToRecover = true;
         }
-    }
-
-
-    
-    startTimer()
-    {
-        if (this.infected === true) {
-            setTimeout(this.recover, 150000);
+        
+        else {
+            this.triedToRecover = true;
         }
     }
 
@@ -97,8 +109,7 @@ class Particle
     draw()
     {
         ctx.fillStyle = this.color;
-        this.startTimer()
-        this.recover()
+        this.recover();
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -127,8 +138,27 @@ function animate()
 {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     handleParticles();
-    elt+=1;
     requestAnimationFrame(animate);
+
+    for (const particle of particleArray) {
+        if (particle.infected === true && InfectedParticleArray.includes(particle.tag) === false) {
+            InfectedParticleArray.push(particle.tag);
+        }
+
+        if (particle.recovered === true && RecoveredParticleArray.includes(particle.tag) === false) {
+            RecoveredParticleArray.push(particle.tag);
+            
+        }
+    }
+
+    for (const particle1 of particleArray) {
+        if (InfectedParticleArray.includes(particle1.tag) === true && particle1.recovered === true) {
+            InfectedParticleArray.pop(particle1.tag);
+        }
+    }
+
+    console.log(InfectedParticleArray);
+    console.log(RecoveredParticleArray);
 }
 
 
@@ -137,18 +167,17 @@ function canvasEventListener()
     var inputElement = document.getElementById("PeopleAmountInput");
     let numberValue = Number(inputElement.value);
 
-    for (let i = 0; i < numberValue; i++) {
-        
-        if (Math.random() < 0.1) {
-            particleArray.push(new Particle(true));
-            particleArray.push(new Particle(true));
-            particleArray.push(new Particle(true));
-        }
-
-        else {
-            particleArray.push(new Particle(false));
-        }
+    for (let i = 0; i < 5; i++) {
+        particleArray.push(new Particle(true, "I" + i));
+        InfectedParticleArray.push(("I" + i))
     }
+
+    for (let i = 0; i < numberValue-5; i++) {
+        particleArray.push(new Particle(false, "N" + i));
+    }
+
+    
+    console.log(InfectedParticleArray.length)
 }
 
 
