@@ -1,0 +1,1 @@
+This is my school project. I decided to create it because I'm interested in Web development, and I wanted to create something pretty difficult for me to test myself. This simulations is very simple: you just need to type some numbers, press start and here you go. It's not finished yet. I will continue working on it a bit later.
